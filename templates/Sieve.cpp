@@ -47,12 +47,17 @@ struct LinearSieve {
     }
 
     // 高速素因数分解: O(log M)
-    // 返り値: {素因数, 指数} の map
-    map<int, int> factorize(int m) {
-        map<int, int> res;
+    // 返り値: {素因数, 指数} の vpii
+    vector<pair<int, int>> factorize(int m) {
+        vector<pair<int, int>> res;
         while (m > 1) {
-            res[min_factor[m]]++;
-            m /= min_factor[m];
+            int p = min_factor[m];
+            int count = 0;
+            while (m % p == 0) {
+                count++;
+                m /= p;
+            }
+            res.push_back({p, count});
         }
         return res;
     }

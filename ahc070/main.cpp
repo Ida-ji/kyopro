@@ -1,5 +1,5 @@
 //This code uses templates generated with AI before the contest.
-//Repository URL : https://github.com/Ida-ji/kyopro/tree/main/template
+//Repository URL : https://github.com/Ida-ji/kyopro/tree/main/templates
 
 #include <bits/stdc++.h>
 using namespace std;

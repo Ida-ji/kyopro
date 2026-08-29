@@ -8,6 +8,25 @@ using vvb = vector<vector<bool>>;
 
 #define rep(i, s, t) for (int i = s; i < t; i++)
 
+struct FastRNG {
+    uint64_t state = 88172645463325252ULL;
+
+    inline uint64_t rand() {
+        state += 0xa0761d6478bd642fULL;
+        unsigned __int128 mum = (unsigned __int128)state * (state ^ 0xe7037ed1a0b428dbULL);
+        return (uint64_t)mum ^ (uint64_t)(mum >> 64);
+    }
+
+    inline int rand_int(int mod) {
+        if (mod <= 1) return 0;
+        return (int)(((unsigned __int128)rand() * (uint64_t)mod) >> 64);
+    }
+
+    inline double rand_double() { // [0.0, 1.0)
+        return (rand() >> 11) * (1.0 / 9007199254740992.0);
+    }
+} rng;
+
 int N;
 int main() {
     std::vector<int> vec = {10, 20, 30, 40};
@@ -28,9 +47,8 @@ int main() {
     string s(5, 'a');
 
     vi idx(N*N);
-    random_device rd;
     iota(idx.begin(), idx.end(), 0); //0~N*Nを生成
-    shuffle(idx.begin(), idx.end(), rd); //シャッフル
+    shuffle(idx.begin(), idx.end(), rng); //シャッフル
 
     vector<int> vec = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3};
     vector<int> result;

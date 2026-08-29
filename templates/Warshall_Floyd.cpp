@@ -31,6 +31,7 @@ void init_warshall_floyd() {
     numstates = N*N;
     const int INF = 1e9;
     disttable.assign(numstates, vector<int>(numstates, INF));
+    nextop.assign(numstates, vector<char>(numstates, '?'));
 
     //自己ループ初期化＆LRFによる1手遷移の初期化
     for (int i=0; i<numstates; i++) {

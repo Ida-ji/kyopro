@@ -43,7 +43,7 @@ int main() {
         if (chrono::duration_cast<chrono::milliseconds>(now - start).count() > 1900) break;
         vector<beam> newbeams;
 
-        for (auto cb : beams) {
+        for (const auto &cb : beams) {
             //近傍を生やす
             beam nb = cb;
             //スコア計算をする
