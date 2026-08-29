@@ -82,10 +82,10 @@ int main() {
 
                     //...
                     if (depth + 1 <= MAX_DEPTH) {
-                        // ★状態を追加
+                        //状態を追加
                         beams[depth + 1].insert(nb);
 
-                        // ★上限を超えたら「最もスコアが低い要素」を O(log B) で捨てる（MLE防止）
+                        //上限を超えたら「最もスコアが低い要素」を O(log B) で捨てる
                         if (beams[depth + 1].size() > MAX_BEAM_SIZE) {
                             beams[depth + 1].erase(beams[depth + 1].begin());
                         }

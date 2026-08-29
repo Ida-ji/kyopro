@@ -13,9 +13,6 @@ using vpii = vector<pair<int, int>>;
 int N;
 vvb hwall;   // hwall[i][j]: (i,j) と (i+1,j) の間が通れるか (true: 通れる, false: 壁)
 vvb vwall;   // vwall[i][j]: (i,j) と (i,j+1) の間が通れるか
-vvi a;       // 汚れ
-vvi d;       // 汚れやすさ
-vvb visited; // 訪問済みフラグ
 
 int dy[] = {-1, 1, 0, 0};
 int dx[] = {0, 0, -1, 1};

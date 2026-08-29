@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-using namespace std; // namespace stdを先に書くのが一般的です
+using namespace std;
 
 using ll = long long;
 using vi = vector<int>;

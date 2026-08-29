@@ -47,7 +47,6 @@ int main() {
             accept = true;
         } else {
             //悪くなっても確率的に許容
-            //mt()の結果を最大値で割って [0.0, 1.0) の実数を作る（高速！）
             double rand_real = (double)rd() / 4294967295.0; 
             double prob = exp((double)score_diff / temp);
             
