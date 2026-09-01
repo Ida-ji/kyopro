@@ -1,3 +1,6 @@
+//This code uses templates generated with AI before the contest.
+//Repository URL : https://github.com/Ida-ji/kyopro/tree/main/templates
+
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
@@ -29,144 +32,137 @@ struct FastRNG {
     }
 } rng;
 
-int N;
+int calcdist(int a, int b, int c, int d) {
+    return (int)abs(a-c) + (int)abs(b-d);
+}
+
 
 int dy[] = {-1, 1, 0, 0};
 int dx[] = {0, 0, -1, 1};
 
-// マス(sy, sx)から(ty, tx)への最短経路文字列を取得
-string getpath(int sy, int sx, int ty, int tx) {
-    if (sy == ty && sx == tx) return "";
-
-    vector<vector<pair<int, int>>> parent(N, vpii(N));
-    vvb seen(N, vb(N, false));
-    queue<pair<int, int>> q;
-
-    q.push({sy, sx});
-    seen[sy][sx] = true;
-
-    while (!q.empty()) {
-        auto [cy, cx] = q.front();
-        q.pop();
-
-        if (cy == ty && cx == tx) break;
-
-        rep(dir, 0, 4) {
-            int ny = cy + dy[dir];
-            int nx = cx + dx[dir];
-
-            if (ny < 0 || N <= ny || nx < 0 || N <= nx || seen[ny][nx]) continue;
-
-            parent[ny][nx] = {cy, cx};
-            seen[ny][nx] = true;
-            q.push({ny, nx});
-        }
-    }
-
-    string ret = "";
-    int cy = ty, cx = tx;
-    while (cy != sy || cx != sx) { 
-        auto [py, px] = parent[cy][cx];
-        if (cy - py == -1 && cx == px) ret += 'U';
-        else if (cy - py == 1 && cx == px) ret += 'D';
-        else if (cy == py && cx - px == -1) ret += 'L';
-        else if (cy == py && cx - px == 1) ret += 'R';
-
-        cy = py;
-        cx = px;
-    }
-
-    reverse(ret.begin(), ret.end());
-    return ret;
-}
 
 int main() {
-    cin >> N;
-    vvi h(N, vi(N));
+    //1.入力受付
+    int N, M; cin >> N >> M;
+    vpii ab(N*N);
+    rep(i, 0, N*N) {
+        int a, b; cin >> a >> b;
+        ab[i] = {a, b};
+    }
 
-    rep(i, 0, N) {
-        rep(j, 0, N) {
-            cin >> h[i][j];
-        }    
-    } 
 
-    pii trackpos = {0, 0};
-    int trackd = 0;
+    int finalscore = 1e9;
+    vpii final_ij = {};
+    vi final_m(10000);
+    //山登り
+    auto start = chrono::steady_clock::now();
+    while (true) {
+        auto now = chrono::steady_clock::now();
+        if (chrono::duration_cast<chrono::milliseconds>(now - start).count() > 1900) break;
+        //2.移動手段をランダムに3つ選ぶ
+        vpii ij(3);
+        rep(i, 0, 3) {
+            int ry = rng.rand_int(N);
+            int rx = rng.rand_int(N);
+            ij[i] = {ry, rx};
+        } 
 
-    // 候補マスの中から移動コスト（距離）が最小のマスを1つ選ぶ関数
-    auto select_best_candidate = [&](bool is_positive_target) -> pii {
-        vpii candidates;
-        rep(i, 0, N) {
-            rep(j, 0, N) {
-                if (is_positive_target && h[i][j] > 0) {
-                    candidates.push_back({i, j});
-                } else if (!is_positive_target && h[i][j] < 0) {
-                    candidates.push_back({i, j});
+        bool visited[N][N];
+        memset(visited, false, sizeof(visited)); // 高速ゼロクリア
+
+        int barrier[N][N];
+        memset(visited, 0, sizeof(visited));
+
+        int posy = 0; int posx = 0;
+        vi m(10000);
+        int total_dist = 0;
+        rep(t, 0, 10000) {
+            //3.怪異が来る場所を読み取る
+            auto [at, bt] = ab[t];
+
+
+            //4.現在位置から次の行先の候補を3つ出す
+            vpii candidates(3);
+            rep(idx, 0, 3) {
+                candidates[idx] = {(posy + ij[idx].first)%N, (posx + ij[idx].second)%N};
+            }
+
+            //もし(at, bt)の周辺がvisitedなら、次の行先は「一番脆弱な場所」にする
+            bool isvisited = false;
+            rep(dir, 0, 4) {
+                int at_around = at + dy[dir];
+                int bt_around = bt + dx[dir];
+                //盤面外ならcontinue;
+                if (at_around < 0 || N <= at_around || bt_around < 0 || N <= bt_around) continue;
+                if (visited[at_around][bt_around]) isvisited = true;
+            }
+            if (isvisited) {
+                int most_vulner_idx = -1;
+                int most_vulner_num = 1e9;
+                rep(i, 0, 3) {
+                    if (barrier[candidates[i].first][candidates[i].second] < 
+                        most_vulner_num) {
+                            most_vulner_idx = i;
+                            most_vulner_num = barrier[candidates[i].first][candidates[i].second];
+                        }
+                }
+                m[t] = most_vulner_idx;
+                //total_distは何もしない
+                //posyとposxを更新
+                posy = (posy + ij[most_vulner_idx].first)%N;
+                posx = (posx + ij[most_vulner_idx].second)%N;
+                //visitedをtrueに
+                visited[posy][posx] = true;
+                //barrierを更新
+                rep(i, max(0, posy-5), min(N-1, posy+5)) {
+                    rep(j, max(0, posx-5), min(N-1, posx+5)) {
+                        barrier[i][j]++;
+                    }
+                }
+            }
+
+            else {
+
+                //5.各候補に対して、一番怪異との距離が小さいものを求める
+                int mt = -1;
+                int mind = 1e9;
+                rep(idx2, 0, 3) {
+                    int d = calcdist(at, bt, candidates[idx2].first, candidates[idx2].second);
+                    if (d < mind) {
+                        mt = idx2;
+                        mind = d;
+                    }
+                }
+
+                //6.mtを保存＆total_distに加算
+                m[t] = mt;
+                total_dist += mind;
+
+                //7.posyとposxを更新
+                posy = (posy + ij[mt].first)%N;
+                posx = (posx + ij[mt].second)%N;
+                //visitedをtrueに
+                visited[posy][posx] = true;
+
+                //barrierを更新
+                rep(i, max(0, posy-5), min(N-1, posy+5)) {
+                    rep(j, max(0, posx-5), min(N-1, posx+5)) {
+                        barrier[i][j]++;
+                    }
                 }
             }
         }
 
-        if (candidates.empty()) return {-1, -1};
-
-        // 候補数が20個を超える場合はランダムに10個だけ抽出
-        if (candidates.size() > 20) {
-            rep(i, 0, 20) {
-                int swap_idx = i + rng.rand_int((int)candidates.size() - i);
-                swap(candidates[i], candidates[swap_idx]);
-            }
-            candidates.resize(10);
+        int current_score = total_dist;
+        if (current_score < finalscore) {
+          finalscore = current_score;
+          final_ij = ij;
+          final_m = m;
         }
-
-        // 抽出された候補（最大10個）の中でマンハッタン距離が最も近いマスを選択
-        pii best_pos = candidates[0];
-        int min_dist = abs(trackpos.first - candidates[0].first) + abs(trackpos.second - candidates[0].second);
-
-        for (size_t i = 1; i < candidates.size(); i++) {
-            int dist = abs(trackpos.first - candidates[i].first) + abs(trackpos.second - candidates[i].second);
-            if (dist < min_dist) {
-                min_dist = dist;
-                best_pos = candidates[i];
-            }
-        }
-        return best_pos;
-    };
-
-    rep(t, 0, 500) {
-        // 高いマスの候補選定
-        pii target_high = select_best_candidate(true);
-
-        if (target_high.first == -1) {
-            if (trackd == 0) goto ex;
-        } else {
-            int r1y = target_high.first;
-            int r1x = target_high.second;
-
-            string path1 = getpath(trackpos.first, trackpos.second, r1y, r1x);
-            for (auto c : path1) cout << c << endl;
-            trackpos = {r1y, r1x};
-
-            trackd += h[r1y][r1x];
-            cout << "+" << h[r1y][r1x] << endl;
-            h[r1y][r1x] = 0;
-        }
-
-        // 低いマスの候補選定
-        pii target_low = select_best_candidate(false);
-        if (target_low.first == -1) continue;
-
-        int r2y = target_low.first;
-        int r2x = target_low.second;
-
-        string path2 = getpath(trackpos.first, trackpos.second, r2y, r2x);
-        for (auto c : path2) cout << c << endl;
-        trackpos = {r2y, r2x};
-
-        int amount = min(-h[r2y][r2x], trackd);
-        trackd -= amount;
-        h[r2y][r2x] += amount;
-        cout << "-" << amount << endl;
     }
-    
-ex:
-    return 0;
+
+    //7.出力
+    rep(i, 0, 3) cout << final_ij[i].first << " " << final_ij[i].second << endl;
+    rep(i, 0, 10000) cout << final_m[i] << endl;
+
 }

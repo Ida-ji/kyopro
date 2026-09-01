@@ -25,6 +25,8 @@ int main() {
 
     //キューは動的メモリ確保が重いので、静的配列キューにする
 
+    //push_back()ではなく、emplace_back()を使おう
+
     bool visited[50][50];
     memset(visited, false, sizeof(visited)); // 高速ゼロクリア
     //intの時は memset(visited, 0, sizeof(visited)); 

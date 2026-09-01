@@ -1,3 +1,7 @@
+//This code uses templates generated with AI before the contest.
+//Repository URL : https://github.com/Ida-ji/kyopro/tree/main/templates
+#pragma GCC optimize("O3,unroll-loops")
+
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
@@ -9,7 +13,6 @@ using pii = pair<int, int>;
 using vpii = vector<pair<int, int>>;
 
 #define rep(i, s, t) for (int i = s; i < t; i++)
-
 
 struct FastRNG {
     uint64_t state = 88172645463325252ULL;
@@ -30,139 +33,210 @@ struct FastRNG {
     }
 } rng;
 
-int N;
-
-int dy[] = {-1, 1, 0, 0};
-int dx[] = {0, 0, -1, 1};
-
-random_device rd;
-
-// マス(sy, sx)から(ty, tx)への最短経路文字列を取得
-string getpath(int sy, int sx, int ty, int tx) {
-    if (sy == ty && sx == tx) return "";
-
-    vector<vector<pair<int, int>>> parent(N, vpii(N));
-    vvb seen(N, vb(N, false));
-    queue<pair<int, int>> q;
-
-    q.push({sy, sx});
-    seen[sy][sx] = true;
-
-    while (!q.empty()) {
-        auto [cy, cx] = q.front();
-        q.pop();
-
-        if (cy == ty && cx == tx) break;
-
-        rep(dir, 0, 4) {
-            int ny = cy + dy[dir];
-            int nx = cx + dx[dir];
-
-            if (ny < 0 || N <= ny || nx < 0 || N <= nx || seen[ny][nx]) continue;
-
-            parent[ny][nx] = {cy, cx};
-            seen[ny][nx] = true;
-            q.push({ny, nx});
-        }
-    }
-
-    // 経路復元
-    string ret = "";
-    int cy = ty, cx = tx;
-    while (cy != sy || cx != sx) { 
-        auto [py, px] = parent[cy][cx];
-        if (cy - py == -1 && cx == px) ret += 'U';
-        else if (cy - py == 1 && cx == px) ret += 'D';
-        else if (cy == py && cx - px == -1) ret += 'L';
-        else if (cy == py && cx - px == 1) ret += 'R';
-
-        cy = py;
-        cx = px;
-    }
-
-    reverse(ret.begin(), ret.end());
-    return ret;
+int calcdist(int a, int b, int c, int d) {
+    return (int)abs(a-c) + (int)abs(b-d);
 }
 
+
 int main() {
-    //1.入力受取
-    cin >> N;
-    vvi h(N, vi(N));
+    //1.入力受付
+    int N, M; cin >> N >> M;
+    vpii ab(N*N);
+    rep(i, 0, N*N) {
+        int a, b; cin >> a >> b;
+        ab[i] = {a, b};
+    }
 
-    rep(i, 0, N) {
-        rep(j, 0, N) {
-            cin >> h[i][j];
-        }    
-    } 
 
-    pii trackpos = {0, 0};
-    int trackd = 0;
-    vector<string> order(0);
-    rep(t, 0, 500) {
-        //2.高いマスを見る
-        int r1y = rng.rand_int(N);
-        int r1x = rng.rand_int(N);
-        int it = 0;
-        while (h[r1y][r1x] <= 0) {
-            r1y = rng.rand_int(N);
-            r1x = rng.rand_int(N);
-            it++;
-            if (it > 500) {
-                //500回やっても見つからなかったら、
-                //もう盤面に高いマスは残ってないと言っていい
-                break;
+    int finalscore = 1e9;
+    vpii final_ij = {};
+    vi final_m(10000);
+    //山登り
+    auto start = chrono::steady_clock::now();
+    while (true) {
+        auto now = chrono::steady_clock::now();
+        if (chrono::duration_cast<chrono::milliseconds>(now - start).count() > 1950) break;
+        //2.移動手段をランダムに3つ選ぶ
+        vpii ij(3);
+        rep(i, 0, 3) {
+            int ry = rng.rand_int(N);
+            int rx = rng.rand_int(N);
+            ij[i] = {ry, rx};
+        } 
+
+        bool visited[N][N];
+        memset(visited, false, sizeof(visited)); // 高速ゼロクリア
+
+        bool ghost_visited[N][N];
+        memset(ghost_visited, false, sizeof(visited)); // 高速ゼロクリア
+
+        int barrier[N][N];
+        memset(barrier, 0, sizeof(visited));
+
+        int posy = 0; int posx = 0;
+        vi m(10000);
+        vpii paper(10000, {-1, -1}); //お札を置いた場所
+        int total_dist = 0;
+        rep(t, 0, 10000) {
+            //3.怪異が来る場所を読み取る
+            auto [at, bt] = ab[t];
+
+
+            //4.現在位置から次の行先の候補を3つ出す
+            vpii candidates(3);
+            rep(idx, 0, 3) {
+                candidates[idx] = {(posy + ij[idx].first)%N, (posx + ij[idx].second)%N};
             }
-        }
 
-        //イテレータ上限に達してなお高いマスでない場合
-        if (h[r1y][r1x] <= 0) {
-            if (trackd == 0) goto ex;
+            //もし(at, bt)がvisitedなら、次の行先は「まだ行ったことが無い場所」にする
+            if (visited[at][bt]) {
+                vi not_visited_candidates(0);
+                rep(i, 0, 3) {
+                    if (!visited[candidates[i].first][candidates[i].second] 
+                            && !ghost_visited[candidates[i].first][candidates[i].second]) {
+                        //行ったことが無いのでnot_visited_candidatesに追加
+                        not_visited_candidates.push_back(i);
+                    }
+                }
+                int r = -1;
+                if (!not_visited_candidates.empty()) {
+                    r = rng.rand_int((int)not_visited_candidates.size());
+                    m[t] = not_visited_candidates[r];
+                }
+                else {
+                    r = rng.rand_int(3);
+                    m[t] = r;
+                }
+                //total_distは何もしない
+                //posyとposxを更新
+                posy = (posy + ij[r].first)%N;
+                posx = (posx + ij[r].second)%N;
+                paper[t] = {posy, posx};
+                //visitedをtrueに
+                visited[posy][posx] = true;
+                //barrierを更新
+                rep(i, max(0, posy-2), min(N-1, posy+2)) {
+                    rep(j, max(0, posx-2), min(N-1, posx+2)) {
+                        barrier[i][j]++;
+                    }
+                }
+            }
+
             else {
-                //盤面に高いマスは無いが、トラックに積んである土がある場合
-                //トラックは何もしない
+                //t < 2000の時、
+                if (t < 2000) {
+                    //5.各候補に対して、一番怪異との距離が小さいものを求める
+                    int mt = -1;
+                    int mind = 1e9;
+                    rep(idx2, 0, 3) {
+                        int d = calcdist(at, bt, candidates[idx2].first, candidates[idx2].second);
+                        if (d < mind) {
+                            mt = idx2;
+                            mind = d;
+                        }
+                    }
+
+                    //本当にmindが最小なんですか？
+                    bool israndom = false;
+                    rep(i, 0, t) {
+                        int simu_d = calcdist(at, bt, paper[i].first, paper[i].second);
+                        if (simu_d <= mind) {
+                            //mindは最小ではないので、やはり次の行先は「まだ行ったことが無い場所」にする
+                            vi not_visited_candidates(0);
+                            rep(i, 0, 3) {
+                                if (!visited[candidates[i].first][candidates[i].second] 
+                                    && !ghost_visited[candidates[i].first][candidates[i].second]) {
+                                    //行ったことが無いのでnot_visited_candidatesに追加
+                                    not_visited_candidates.push_back(i);
+                                }
+                            }
+                            int r = -1;
+                            if (!not_visited_candidates.empty()) {
+                                r = rng.rand_int((int)not_visited_candidates.size());
+                                m[t] = not_visited_candidates[r];
+                            }
+                            else {
+                                r = rng.rand_int(3);
+                                m[t] = r;
+                            }
+                            total_dist += 2*(int)sqrt(t+1);
+                            //posyとposxを更新
+                            posy = (posy + ij[r].first)%N;
+                            posx = (posx + ij[r].second)%N;
+                            paper[t] = {posy, posx};
+                            //visitedをtrueに
+                            visited[posy][posx] = true;
+                            //barrierを更新
+                            rep(i, max(0, posy-2), min(N-1, posy+2)) {
+                                rep(j, max(0, posx-2), min(N-1, posx+2)) {
+                                    barrier[i][j]++;
+                                }
+                            }
+                            israndom = true; //行先をランダムに変えましたのtrue
+                            break;
+                        }
+                    }
+
+                    if (!israndom) {
+                        //6.mtを保存＆total_distに加算
+                        m[t] = mt;
+                        total_dist += mind;
+
+                        //7.posyとposxを更新
+                        posy = (posy + ij[mt].first)%N;
+                        posx = (posx + ij[mt].second)%N;
+                        visited[posy][posx] = true;
+                        paper[t] = {posy, posx};
+                        //barrierを更新
+                        rep(i, max(0, posy-2), min(N-1, posy+2)) {
+                            rep(j, max(0, posx-2), min(N-1, posx+2)) {
+                                barrier[i][j]++;
+                            }
+                        }
+                    }
+                }
+                else {
+                    //t >= 2000の時
+                    //5.各候補に対して、最も脆弱性の高いマスに行く
+                    int most_vulner_idx = -1;
+                    int most_vulner_num = 1e9;
+                    rep(i, 0, 3) {
+                        if (barrier[candidates[i].first][candidates[i].second] < 
+                            most_vulner_num) {
+                                most_vulner_idx = i;
+                                most_vulner_num = barrier[candidates[i].first][candidates[i].second];
+                        }
+                    }
+                    m[t] = most_vulner_idx;
+                    total_dist += (int)sqrt(t+1);
+
+                    //posyとposxを更新
+                    posy = (posy + ij[most_vulner_idx].first)%N;
+                    posx = (posx + ij[most_vulner_idx].second)%N;
+                    //visitedをtrueに
+                    visited[posy][posx] = true;
+                    //barrierを更新
+                    rep(i, max(0, posy-2), min(N-1, posy+2)) {
+                        rep(j, max(0, posx-2), min(N-1, posx+2)) {
+                            barrier[i][j]++;
+                        }
+                    }
+                }
             }
-        }
-        //高いマスである場合（正常）
-        else {
-            //3.高いマスへ移動する
-            string path1 = getpath(trackpos.first, trackpos.second, r1y, r1x);
-            for (auto c : path1) cout << c << endl;
-            trackpos = {r1y, r1x};
-            //4.土を積む
-            trackd += h[r1y][r1x];
-            cout << "+" << h[r1y][r1x] << endl;
-            h[r1y][r1x] = 0;
+            //怪異が来た場所をメモ
+            ghost_visited[at][bt] = true;
         }
 
-
-        //5.低いマスを見る
-        int r2y = rng.rand_int(N);
-        int r2x = rng.rand_int(N);
-        int it2 = 0;
-        while (h[r2y][r2x] >= 0) {
-            r2y = rng.rand_int(N);
-            r2x = rng.rand_int(N);
-            it2++;
-        }
-
-        //6.低いマスへ移動する
-        string path2 = getpath(trackpos.first, trackpos.second, r2y, r2x);
-        for (auto c : path2) cout << c << endl;
-        trackpos = {r2y, r2x};
-        //4.土を降ろす
-        //min(-h[...][...], trackd)
-        int amount = min(-h[r2y][r2x], trackd);
-        trackd -= amount;
-        h[r2y][r2x] += amount;
-        cout << "-" << amount << endl;
-    }ex:
-
-    rep(i, 0, N) {
-        rep(j, 0, N) {
-            if (h[i][j] != 0) {
-                //デバッグ用
-                cout << "まだ盤面が綺麗になっていません" << endl;
-            }
+        int current_score = total_dist;
+        if (current_score < finalscore) {
+          finalscore = current_score;
+          final_ij = ij;
+          final_m = m;
         }
     }
+
+    //7.出力
+    rep(i, 0, 3) cout << final_ij[i].first << " " << final_ij[i].second << endl;
+    rep(i, 0, 10000) cout << final_m[i] << endl;
+
 }

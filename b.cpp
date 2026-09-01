@@ -1,141 +1,159 @@
-#pragma GCC optimize("O3,unroll-loops")
+//This code uses templates generated with AI before the contest.
+//Repository URL : https://github.com/Ida-ji/kyopro/tree/main/templates
+
 #include <bits/stdc++.h>
 using namespace std;
-
 using ll = long long;
 using vi = vector<int>;
+using vb = vector<bool>;
 using vvi = vector<vector<int>>;
+using vvb = vector<vector<bool>>;
+using pii = pair<int, int>;
+using vpii = vector<pair<int, int>>;
 
 #define rep(i, s, t) for (int i = s; i < t; i++)
 
 struct FastRNG {
     uint64_t state = 88172645463325252ULL;
+
     inline uint64_t rand() {
         state += 0xa0761d6478bd642fULL;
         unsigned __int128 mum = (unsigned __int128)state * (state ^ 0xe7037ed1a0b428dbULL);
         return (uint64_t)mum ^ (uint64_t)(mum >> 64);
     }
+
     inline int rand_int(int mod) {
         if (mod <= 1) return 0;
         return (int)(((unsigned __int128)rand() * (uint64_t)mod) >> 64);
     }
+
+    inline double rand_double() { // [0.0, 1.0)
+        return (rand() >> 11) * (1.0 / 9007199254740992.0);
+    }
 } rng;
 
-struct beam {
-    ll score;
-    vvi order;
-    vector<vector<ll>> a;
-
-    // multiset 内でスコア昇順に並べるための比較演算子
-    bool operator<(const beam &other) const {
-        return score < other.score;
-    }
-};
-
-int N, M, K;
-const int MOD = 998244353;
-vector<vector<ll>> inita;
-vector<vvi> stamps;
-
-ll scorecalc(const vector<vector<ll>> &A) {
-    ll ret = 0;
-    rep(i, 0, N) rep(j, 0, N) ret += A[i][j];
-    return ret;
+int calcdist(int a, int b, int c, int d) {
+    return (int)abs(a-c) + (int)abs(b-d);
 }
 
-vi mpq() {
-    return {rng.rand_int(M), rng.rand_int(N - 2), rng.rand_int(N - 2)};
-}
 
 int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
+    //1.入力受付
+    int N, M; cin >> N >> M;
+    vpii ab(N*N);
+    rep(i, 0, N*N) {
+        int a, b; cin >> a >> b;
+        ab[i] = {a, b};
+    }
 
-    cin >> N >> M >> K;
-    inita.resize(N, vector<ll>(N, 0));
-    rep(i, 0, N) rep(j, 0, N) cin >> inita[i][j];
 
-    stamps.resize(M, vvi(3, vi(3, 0)));
-    rep(i, 0, M) rep(j, 0, 3) rep(k, 0, 3) cin >> stamps[i][j][k];
-
-    const int MAX_DEPTH = K;
-    const int CHOKUDAI_WIDTH = 1;
-    const size_t MAX_BEAM_SIZE = 30; // 各深さに保持する最大要素数（MLE防止）
-    int width = 5;
-
-    // 各深さの状態を multiset（優先度付き集合）で管理
-    vector<multiset<beam>> beams(MAX_DEPTH + 1);
-
-    beam initbeam;
-    initbeam.score = scorecalc(inita);
-    initbeam.order = {};
-    initbeam.a = inita;
-    beams[0].insert(initbeam);
-
+    int finalscore = 1e9;
+    vpii final_ij = {};
+    vi final_m(10000);
+    //山登り
     auto start = chrono::steady_clock::now();
     while (true) {
         auto now = chrono::steady_clock::now();
         if (chrono::duration_cast<chrono::milliseconds>(now - start).count() > 1900) break;
+        //2.移動手段をランダムに3つ選ぶ
+        vpii ij(3);
+        rep(i, 0, 3) {
+            int ry = rng.rand_int(N);
+            int rx = rng.rand_int(N);
+            ij[i] = {ry, rx};
+        } 
 
-        rep(depth, 0, MAX_DEPTH) {
-            if (beams[depth].empty()) continue;
+        bool visited[N][N];
+        memset(visited, false, sizeof(visited)); // 高速ゼロクリア
 
-            rep(w, 0, CHOKUDAI_WIDTH) {
-                if (beams[depth].empty()) break;
+        int barrier[N][N];
+        memset(visited, 0, sizeof(visited));
 
-                // 改善2：コピーなしで最高スコアの状態を取り出し
-                auto node = beams[depth].extract(prev(beams[depth].end()));
-                beam cb = move(node.value());
+        int posy = 0; int posx = 0;
+        vi m(10000);
+        int total_barriernum = 0;
+        rep(t, 0, 10000) {
+            //3.怪異が来る場所を読み取る
+            auto [at, bt] = ab[t];
 
-                rep(wid, 0, width) {
-                    beam nb = cb;
-                    vi nextorder = mpq();
-                    int nm = nextorder[0], np = nextorder[1], nq = nextorder[2];
 
-                    rep(i, 0, 3) rep(j, 0, 3) {
-                        nb.a[np + i][nq + j] = (nb.a[np + i][nq + j] + stamps[nm][i][j]) % MOD;
+            //4.現在位置から次の行先の候補を3つ出す
+            vpii candidates(3);
+            rep(idx, 0, 3) {
+                candidates[idx] = {(posy + ij[idx].first)%N, (posx + ij[idx].second)%N};
+            }
+
+            //もし(at, bt)がvisitedなら、次の行先は「まだ行ったことが無い場所」にする
+            if (visited[at][bt]) {
+                vpii not_visited_candidates(0);
+                rep(i, 0, 3) {
+                    if (!visited[candidates[i].first][candidates[i].second]) {
+                        //行ったことが無いのでnot_visited_candidatesに追加
+                        not_visited_candidates.push_back({candidates[i].first, candidates[i].second});
                     }
+                }
+                int r = -1;
+                if (!not_visited_candidates.empty()) {
+                    r = rng.rand_int((int)not_visited_candidates.size());
+                }
+                else {
+                    r = rng.rand_int(3);
+                }
+                m[t] = r;
+                total_barriernum += barrier[candidates[r].first][candidates[r].second];;
+                //posyとposxを更新
+                posy = (posy + ij[r].first)%N;
+                posx = (posx + ij[r].second)%N;
+                //visitedをtrueに
+                visited[posy][posx] = true;
+                //barrierを更新
+                rep(i, max(0, posy-5), min(N-1, posy+5)) {
+                    rep(j, max(0, posx-5), min(N-1, posx+5)) {
+                        barrier[i][j]++;
+                    }
+                }
+            }
 
-                    nb.score = scorecalc(nb.a);
-                    nb.order.push_back({nm, np, nq});
+            else {
 
-                    if (depth + 1 <= MAX_DEPTH) {
-                        // 改善1：不要な挿入を事前に弾く
-                        if (beams[depth + 1].size() >= MAX_BEAM_SIZE && nb.score <= beams[depth + 1].begin()->score) {
-                            continue;
-                        }
+                //5.各候補に対して、脆弱性(barrierが薄い)があるところを求める
+                int mt = -1;
+                int min_barriernum = 1e9;
+                rep(idx2, 0, 3) {
+                    if (barrier[candidates[idx2].first][candidates[idx2].second] < min_barriernum) {
+                        mt = idx2;
+                        min_barriernum = barrier[candidates[idx2].first][candidates[idx2].second];
+                    }
+                }
 
-                        beams[depth + 1].insert(nb);
-                        if (beams[depth + 1].size() > MAX_BEAM_SIZE) {
-                            beams[depth + 1].erase(beams[depth + 1].begin());
-                        }   
+                //6.mtを保存
+                m[t] = mt;
+                total_barriernum += min_barriernum;
+
+                //7.posyとposxを更新
+                posy = (posy + ij[mt].first)%N;
+                posx = (posx + ij[mt].second)%N;
+                //visitedをtrueに
+                visited[posy][posx] = true;
+                //barrierを更新
+                rep(i, max(0, posy-5), min(N-1, posy+5)) {
+                    rep(j, max(0, posx-5), min(N-1, posx+5)) {
+                        barrier[i][j]++;
                     }
                 }
             }
         }
-    }
 
-    // 全層の中で最もスコアが高い状態を出力
-    ll best_score = -1;
-    beam bestbeam;
-
-    rep(d, 0, MAX_DEPTH + 1) {
-        if (!beams[d].empty()) {
-            beam top_beam = *prev(beams[d].end());
-            if (top_beam.score > best_score) {
-                best_score = top_beam.score;
-                bestbeam = top_beam;
-            }
+        int current_score = total_barriernum;
+        if (current_score < finalscore) {
+          finalscore = current_score;
+          final_ij = ij;
+          final_m = m;
         }
     }
 
-    int L = bestbeam.order.size();
-    cout << L << "\n";
-    rep(k, 0, L) {
-        cout << bestbeam.order[k][0] << " "
-             << bestbeam.order[k][1] << " "
-             << bestbeam.order[k][2] << "\n";
-    }
+    //7.出力
+    rep(i, 0, 3) cout << final_ij[i].first << " " << final_ij[i].second << endl;
+    rep(i, 0, 10000) cout << final_m[i] << endl;
 
-    return 0;
 }
