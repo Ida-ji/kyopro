@@ -10,12 +10,20 @@ uniform_int_distribution<int> distrib(1, 6);
 
 
 struct FastRNG {
+    using result_type = uint64_t;
+    static constexpr result_type min() { return 0; }
+    static constexpr result_type max() { return UINT64_MAX; }
+
     uint64_t state = 88172645463325252ULL;
 
-    inline uint64_t rand() {
+    inline uint64_t operator()() {
         state += 0xa0761d6478bd642fULL;
         unsigned __int128 mum = (unsigned __int128)state * (state ^ 0xe7037ed1a0b428dbULL);
         return (uint64_t)mum ^ (uint64_t)(mum >> 64);
+    }
+
+    inline uint64_t rand() {
+        return (*this)();
     }
 
     inline int rand_int(int mod) {

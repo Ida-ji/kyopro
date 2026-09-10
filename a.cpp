@@ -1,7 +1,3 @@
-//This code uses templates generated with AI before the contest.
-//Repository URL : https://github.com/Ida-ji/kyopro/tree/main/templates
-#pragma GCC optimize("O3,unroll-loops")
-
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
@@ -33,163 +29,106 @@ struct FastRNG {
     }
 } rng;
 
-int calcdist(int a, int b, int c, int d) {
-    return (int)abs(a-c) + (int)abs(b-d);
-}
-
-
 int main() {
-    //1.入力受付
-    int N, M; cin >> N >> M;
-    vpii ab(N*N);
-    rep(i, 0, N*N) {
-        int a, b; cin >> a >> b;
-        ab[i] = {a, b};
-    }
-
-
-    int finalscore = 1e9;
-    vpii final_ij = {};
-    vi final_m(10000);
-    //山登り
-    auto start = chrono::steady_clock::now();
-    while (true) {
-        auto now = chrono::steady_clock::now();
-        if (chrono::duration_cast<chrono::milliseconds>(now - start).count() > 1950) break;
-        //2.移動手段をランダムに3つ選ぶ
-        vpii ij(3);
-        rep(i, 0, 3) {
-            int ry = rng.rand_int(N);
-            int rx = rng.rand_int(N);
-            ij[i] = {ry, rx};
-        } 
-
-        bool visited[N][N];
-        memset(visited, false, sizeof(visited)); // 高速ゼロクリア
-
-        bool ghost_visited[N][N];
-        memset(visited, false, sizeof(visited)); // 高速ゼロクリア
-
-        int posy = 0; int posx = 0;
-        vi m(10000);
-        vpii paper(10000, {-1, -1}); //お札を置いた場所
-        int total_dist = 0;
-        int penalty = 0; //怪異が的中できなかった時のペナ
-        rep(t, 0, 10000) {
-            //3.怪異が来る場所を読み取る
-            auto [at, bt] = ab[t];
-
-
-            //4.現在位置から次の行先の候補を3つ出す
-            vpii candidates(3);
-            rep(idx, 0, 3) {
-                candidates[idx] = {(posy + ij[idx].first)%N, (posx + ij[idx].second)%N};
-            }
-
-            //もし(at, bt)がvisitedなら、
-            //次の行先は「まだ行ったことが無い場所 && まだ怪異が来てない場所」にする
-            if (visited[at][bt]) {
-                vi not_visited_candidates(0);
-                rep(i, 0, 3) {
-                    if (!visited[candidates[i].first][candidates[i].second] 
-                            && !ghost_visited[candidates[i].first][candidates[i].second]) {
-                        //行ったことが無いのでnot_visited_candidatesに追加
-                        not_visited_candidates.push_back(i);
-                    }
-                }
-                int r = -1;
-                if (!not_visited_candidates.empty()) {
-                    r = rng.rand_int((int)not_visited_candidates.size());
-                    m[t] = not_visited_candidates[r];
-                }
-                else {
-                    r = rng.rand_int(3);
-                    m[t] = r;
-                }
-                //total_distは何もしない
-                //posyとposxを更新
-                posy = (posy + ij[r].first)%N;
-                posx = (posx + ij[r].second)%N;
-                paper[t] = {posy, posx};
-                //visitedをtrueに
-                visited[posy][posx] = true;
-            }
-
-            else {
-                penalty++;
-                //5.各候補に対して、一番怪異との距離が小さいものを求める
-                int mt = -1;
-                int mind = 1e9;
-                rep(idx2, 0, 3) {
-                    int d = calcdist(at, bt, candidates[idx2].first, candidates[idx2].second);
-                    if (d < mind) {
-                        mt = idx2;
-                        mind = d;
-                    }
-                }
-
-                //本当にmindが最小なんですか？
-                bool israndom = false;
-                rep(i, 0, t) {
-                    int simu_d = calcdist(at, bt, paper[i].first, paper[i].second);
-                    if (simu_d <= mind) {
-                        //mindは最小ではないので、
-                        //やはり次の行先は「まだ行ったことが無い場所 && まだ怪異が来てない場所」にする
-                        vi not_visited_candidates(0);
-                        rep(i, 0, 3) {
-                            if (!visited[candidates[i].first][candidates[i].second] 
-                                    && !ghost_visited[candidates[i].first][candidates[i].second]) {
-                                //行ったことが無いのでnot_visited_candidatesに追加
-                                not_visited_candidates.push_back(i);
-                            }
-                        }
-                        int r = -1;
-                        if (!not_visited_candidates.empty()) {
-                            r = rng.rand_int((int)not_visited_candidates.size());
-                            m[t] = not_visited_candidates[r];
-                        }
-                        else {
-                            r = rng.rand_int(3);
-                            m[t] = r;
-                        }
-                        total_dist += simu_d*(int)sqrt((double)(t+1));
-                        //posyとposxを更新
-                        posy = (posy + ij[r].first)%N;
-                        posx = (posx + ij[r].second)%N;
-                        paper[t] = {posy, posx};
-                        //visitedをtrueに
-                        visited[posy][posx] = true;
-                        israndom = true; //行先をランダムに変えましたのtrue
-                        break;
-                    }
-                }
-
-                if (!israndom) {
-                    //6.mtを保存＆total_distに加算
-                    m[t] = mt;
-                    total_dist += mind*(int)sqrt((double)(t+1));
-
-                    //7.posyとposxを更新
-                    posy = (posy + ij[mt].first)%N;
-                    posx = (posx + ij[mt].second)%N;
-                    visited[posy][posx] = true;
-                    paper[t] = {posy, posx};
-                }
-            }
-            //怪異が来た場所をメモ
-            ghost_visited[at][bt] = true;
+    //0.最初の入力受付
+    int N, M, T; cin >> N >> M >> T;
+    //Tターン繰り返す
+    rep(t, 0, T) {
+        //1.入力受付
+        vvi x(N, vi(N));
+        vpii x_sum(2*N*(N-1)); //{評価値の総和、種ID}
+        rep(i, 0, 2*N*(N-1)) {
+            x_sum[i].second = i;
+            rep(j, 0, M) {
+                cin >> x[i][j];
+                x_sum[i].first += x[i][j];
+            }    
         }
 
-        int current_score = total_dist + 10*penalty;
-        if (current_score < finalscore) {
-          finalscore = current_score;
-          final_ij = ij;
-          final_m = m;
+        //前半：N*N個の種を選ぶ
+        vi chosen(0);
+        //2.総和でソートする
+        sort(x_sum.rbegin(), x_sum.rend());
+        //3.前半N*N-M個を選び、残りを別の配列に転記
+        vi unchosen(0);
+        rep(i, 0, N*N-M) {
+            chosen.emplace_back(x_sum[i].second);
+        }
+        rep(i, 0, 2*N*(N-1)-N*N+M) {
+            unchosen.emplace_back(x_sum[i+N*N-M].second);
+        }
+        //4.残りの配列の中から、各評価値ごとにmaxを求める
+        rep(i, 0, M) {
+            int max_value = -1;
+            int max_value_idx = -1;
+
+            rep(j, 0, 2*N*(N-1)-N*N+M) {
+                if (max_value < x[unchosen[j]][i]) {
+                    max_value = x[unchosen[j]][i];
+                    max_value_idx = j;
+                }
+            }
+
+            //chosenに追加
+            chosen.emplace_back(max_value_idx);
+        }
+
+        if ((int)chosen.size() != N*N) {
+            cout << "chosenのサイズがN*Nではありません。  :" << (int)chosen.size() << endl;
+        }
+
+        //後半：種の植え方を決める
+        int finalscore = 0;
+        vi finalpos; //植える配置の一次元配列
+        auto start = chrono::steady_clock::now();
+        while (true) {
+            auto now = chrono::steady_clock::now();
+            if (chrono::duration_cast<chrono::milliseconds>(now - start).count() > (t+1)*200) break;
+            //5.植える位置をランダムに決める
+            vi current_pos = chosen;
+            shuffle(current_pos.begin(), current_pos.end(), rng); //シャッフル
+
+            //6.下方向と右方向において、仮想的に新たな種を作り、
+            //評価値の仮想総和を求める
+            int current_score = 0;
+            //下
+            rep(i, 0, N*(N-1)) {
+                rep(j, 0, M) {
+                    //i番目と(i+N)番目の種を交配
+                    if (rng.rand_int(1) == 0) {
+                        current_score += x[current_pos[i]][j];
+                    }
+                    else {
+                        current_score += x[current_pos[i+N]][j];
+                    }
+                }
+            }
+            //上
+            rep(i, 0, N*N) {
+                if ((i+1)%N == 0) continue;
+                rep(j, 0, M) {
+                    //i番目と(i+1)番目の種を交配
+                    if (rng.rand_int(1) == 0) {
+                        current_score += x[current_pos[i]][j];
+                    }
+                    else {
+                        current_score += x[current_pos[i+1]][j];
+                    }
+                }
+            }
+
+            //7.比較
+            if (current_score > finalscore) {
+                finalscore = current_score;
+                finalpos = current_pos;
+            }
+        }
+        //8.出力
+        rep(i, 0, N) {
+            rep(j, 0, N) {
+                cout << finalpos[i*N+j] << " ";
+            }
+            cout << endl;
         }
     }
-
-    //7.出力
-    rep(i, 0, 3) cout << final_ij[i].first << " " << final_ij[i].second << endl;
-    rep(i, 0, 10000) cout << final_m[i] << endl;
-
 }
