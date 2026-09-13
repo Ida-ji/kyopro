@@ -88,6 +88,7 @@ int main() {
         }
 
         if ((int)chosen.size() != N*N) {
+            //デバッグ用
             cout << "chosenのサイズがN*Nではありません。  :" << (int)chosen.size() << endl;
             return 0;
         }
