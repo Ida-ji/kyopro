@@ -1,44 +1,78 @@
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
-using vi = vector<int>;
-using vb = vector<bool>;
-using vvi = vector<vector<int>>;
-using vvb = vector<vector<bool>>;
-using pii = pair<int, int>;
-using vpii = vector<pair<int, int>>;
 
-#define rep(i, s, t) for (int i = s; i < t; i++)
+struct Target {
+    int id;
+    long long x, y;
+};
 
-int main() {   
-    //1.入力受付
-    int N, M; cin >> N >> M;
-    vi X(M); rep(i, 0, M) cin >> X[i];
-    vector<ll> A(M); rep(i, 0, M) cin >> A[i];
-    
-    //2.idxを求める
-    vector<ll> idx(N); //元々どこにあった石なのか
-    int right = N-1;
-    for (int i=M-1; i>=0; i--) {
-        //rightが9でA[2]=4でX[2]=6なら、
-        //ギリギリ大丈夫
-        if (right-A[i]+1 < X[i]-1) {
-            cout << -1 << endl;
-            return 0;
-        }
-        //例えば、right=6, A[i]=2なら、
-        //6, 5を見させたい
-        //rightは4に更新
-        for (int j=right; j>right-A[i]; j--) {
-            idx[j] = i;
-        }
-        right -= A[i];
+struct Operation {
+    long long x1, y1, x2, y2;
+};
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N;
+    if (!(cin >> N)) return 0;
+
+    vector<Target> targets(N);
+    for (int i = 0; i < N; i++) {
+        targets[i].id = i;
+        cin >> targets[i].x >> targets[i].y;
     }
 
-    ll ans = 0;
-    //3.手数を計算
-    rep(i, 0, N) {
-        ans += i-X[idx[i]]+1;
+    // 原点に近い順 (x + y が小さい順) にソート
+    sort(targets.begin(), targets.end(), [](const Target& a, const Target& b) {
+        return (a.x + a.y) < (b.x + b.y);
+    });
+
+    // 既に作成された点のリスト（初期値は原点）
+    vector<pair<long long, long long>> created;
+    created.push_back({0, 0});
+
+    vector<Operation> ops;
+
+    for (int i = 0; i < N; i++) {
+        long long tx = targets[i].x;
+        long long ty = targets[i].y;
+
+        // created の中から cx <= tx && cy <= ty を満たし、最も距離が近い点を探す
+        int best_idx = -1;
+        long long min_dist = 4e18; // 十分大きい値で初期化
+
+        for (int j = 0; j < (int)created.size(); j++) {
+            auto [cx, cy] = created[j];
+            if (cx <= tx && cy <= ty) {
+                long long total_dist = (tx - cx) + (ty - cy);
+                if (total_dist < min_dist) {
+                    min_dist = total_dist;
+                    best_idx = j;
+                }
+            }
+        }
+
+        auto [bx, by] = created[best_idx];
+
+        // L字型に伸ばす: (bx, by) -> (tx, by) -> (tx, ty)
+        // 1. x方向に伸ばす
+        if (bx != tx) {
+            ops.push_back({bx, by, tx, by});
+            created.push_back({tx, by});
+        }
+        // 2. y方向に伸ばす
+        if (by != ty) {
+            ops.push_back({tx, by, tx, ty});
+            created.push_back({tx, ty});
+        }
     }
-    cout << ans << endl;
+
+    // 出力
+    cout << ops.size() << "\n";
+    for (const auto& op : ops) {
+        cout << op.x1 << " " << op.y1 << " " << op.x2 << " " << op.y2 << "\n";
+    }
+
+    return 0;
 }

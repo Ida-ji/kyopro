@@ -59,4 +59,26 @@ int main() {
             result.push_back(n);
         }
     }
+
+    //重複要素を削除(unique)
+    vec.erase(unique(vec.begin(), vec.end()), vec.end());
+
+    vi v = {1, 2, 4, 4, 5};
+    auto it = upper_bound(v.begin(), v.end(), 4); //4 より大きい最初の要素を指すイテレータを取得
+    int idx = distance(v.begin(), it); // インデックスに変換
+    cout << "Index: " << idx << ", Value: " << *it << endl; 
+    // 出力結果: Index: 4, Value: 5 (値 5 の位置を指す)
+    //lower_boundは指定された値「以上」を探す
+
+    //set
+    set<pair<int, int>> BA;
+    int a, b;
+    int cnt = 0;
+    // データの追加
+    BA.insert({a, b});
+
+    // データの存在確認
+    if (BA.count({a, b})) {
+        cnt++;
+    }
 }
