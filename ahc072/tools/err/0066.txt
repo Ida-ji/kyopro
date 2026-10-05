@@ -1,0 +1,29 @@
+[UPDATE] Iter: 3 | Time: 0.000s | Mode: Seq | New Best: 589
+[UPDATE] Iter: 30 | Time: 0.000s | Mode: Seq | New Best: 556
+[UPDATE] Iter: 102 | Time: 0.000s | Mode: Seq | New Best: 547
+[UPDATE] Iter: 116 | Time: 0.000s | Mode: Seq | New Best: 545
+[UPDATE] Iter: 137 | Time: 0.032s | Mode: Seq | New Best: 543
+[UPDATE] Iter: 151 | Time: 0.032s | Mode: Seq | New Best: 542
+[UPDATE] Iter: 691 | Time: 0.153s | Mode: Seq | New Best: 541
+[UPDATE] Iter: 2465 | Time: 0.557s | Mode: Seq | New Best: 537
+[UPDATE] Iter: 3388 | Time: 0.755s | Mode: Seq | New Best: 534
+
+========== DETAILED LOGS FOR BEST RUN ==========
+
+========== DEBUG SUMMARY ==========
+Total Iterations   : 8448
+Phase2 Prep Runs   : 6144
+Best Score (Steps) : 534
+Prep Steps Used    : 4
+Best Sim Mode      : 19
+Best Processing Order: C F A D B E 
+-----------------------------------
+Action Breakdowns:
+  - Normal Moves     : 391
+  - Combo Jumps      : 21
+  - Taxi Jumps       : 12
+  - Mini Catapults   : 35
+  - Hub Catapults    : 0
+  - Sweep Moves      : 0
+===================================
+

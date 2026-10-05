@@ -27,6 +27,8 @@ int main() {
 
     //push_back()ではなく、emplace_back()を使おう
 
+    //配列をbitで管理させると高速化出来て嬉しい？
+
     bool visited[50][50];
     memset(visited, false, sizeof(visited)); // 高速ゼロクリア
     //intの時は memset(visited, 0, sizeof(visited)); 
