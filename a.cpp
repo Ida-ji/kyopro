@@ -1,10 +1,6 @@
+#pragma GCC optimize("O3,unroll-loops")
 #include <bits/stdc++.h>
 using namespace std;
-using ll = long long;
-using vi = vector<int>;
-using vb = vector<bool>;
-using vvi = vector<vector<int>>;
-using vvb = vector<vector<bool>>;
 using pii = pair<int, int>;
 using vpii = vector<pair<int, int>>;
 
@@ -12,171 +8,103 @@ using vpii = vector<pair<int, int>>;
 
 struct FastRNG {
     uint64_t state = 88172645463325252ULL;
-
     inline uint64_t rand() {
         state += 0xa0761d6478bd642fULL;
         unsigned __int128 mum = (unsigned __int128)state * (state ^ 0xe7037ed1a0b428dbULL);
         return (uint64_t)mum ^ (uint64_t)(mum >> 64);
     }
-
     inline int rand_int(int mod) {
         if (mod <= 1) return 0;
         return (int)(((unsigned __int128)rand() * (uint64_t)mod) >> 64);
     }
-
-    inline double rand_double() { // [0.0, 1.0)
-        return (rand() >> 11) * (1.0 / 9007199254740992.0);
-    }
 } rng;
-
-// 幅優先探索 (BFS) で start から target までの最短パスを取得
-vi get_bfs_path(int N, const vvi& g, int start, int target) {
-    vi dist(N, -1);
-    vi parent(N, -1);
-    queue<int> q;
-    
-    dist[start] = 0;
-    q.push(start);
-    
-    while (!q.empty()) {
-        int u = q.front();
-        q.pop();
-        if (u == target) break;
-        
-        for (int v : g[u]) {
-            if (dist[v] == -1) {
-                dist[v] = dist[u] + 1;
-                parent[v] = u;
-                q.push(v);
-            }
-        }
-    }
-    
-    vi path;
-    for (int curr = target; curr != -1; curr = parent[curr]) {
-        path.push_back(curr);
-    }
-    reverse(path.begin(), path.end());
-    return path;
-}
 
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    int N, M, T, La, Lb; cin >> N >> M >> T >> La >> Lb;
-    vvi g(N);
-    rep(i, 0, M) {
-        int u, v; cin >> u >> v;
-        g[u].push_back(v);
-        g[v].push_back(u);
-    }
-    vi t(T);
-    rep(i, 0, T) cin >> t[i];
-    vvi pos(N);
-    rep(i, 0, N) {
-        int x, y; cin >> x >> y;
-        pos[i] = {x, y};
-    }
+    int N; cin >> N;
+    vpii good_fish(N), bad_fish(N);
+    rep(i, 0, N) cin >> good_fish[i].first >> good_fish[i].second;
+    rep(i, 0, N) cin >> bad_fish[i].first >> bad_fish[i].second;
 
-    // 0 からスタートして t[0], t[1]... と巡回するルートリストを作る
-    vi targets;
-    targets.push_back(0);
-    for (int v : t) targets.push_back(v);
+    // 長方形の境界（座標は 0 から 100000）
+    int x1 = rng.rand_int(90000);
+    int x2 = x1 + 1 + rng.rand_int(100000 - x1 - 1);
+    int y1 = rng.rand_int(90000);
+    int y2 = y1 + 1 + rng.rand_int(100000 - y1 - 1);
 
-    // 巡回パスを事前に作成[cite: 2]
-    vi full_path;
-    rep(i, 0, (int)targets.size() - 1) {
-        vi path = get_bfs_path(N, g, targets[i], targets[i+1]);
-        for (size_t j = (i == 0 ? 0 : 1); j < path.size(); j++) {
-            full_path.push_back(path[j]);
-        }
-    }
-
-    // --- 前半：A を作成する ---
-    vi A;
-    vb in_A(N, false);
-
-    // ステップ1: full_path の中で「まだ A に入っていない都市」を最優先で追加
-    for (int v : full_path) {
-        if ((int)A.size() < La && !in_A[v]) {
-            A.push_back(v);
-            in_A[v] = true;
-        }
-    }
-
-    // ステップ2: まだ A に入っていない都市があれば残りの枠に追加（全都市の存在を保証）
-    rep(i, 0, N) {
-        if ((int)A.size() < La && !in_A[i]) {
-            A.push_back(i);
-            in_A[i] = true;
-        }
-    }
-
-    // ステップ3: まだ A に空きがある場合、full_path の要素（重複あり）で埋める
-    for (int v : full_path) {
-        if ((int)A.size() < La) {
-            A.push_back(v);
-        } else {
-            break;
-        }
-    }
-
-    // 万が一 La に満たない場合は 0 で埋める
-    while ((int)A.size() < La) {
-        A.push_back(0);
-    }
-
-    // A の出力[cite: 2]
-    rep(i, 0, La) {
-        cout << A[i] << (i == La - 1 ? "" : " ");
-    }
-    cout << "\n";
-
-    // --- 後半：移動シミュレーション ---
-    vi B(Lb, -1);
-    vb in_B(N, false);
-
-    int init_len = min(La, Lb);
-    cout << "s " << init_len << " 0 0\n";
-    rep(i, 0, init_len) {
-        B[i] = A[i];
-        in_B[A[i]] = true;
-    }
-
-    int cur = 0; // 初期位置は 0[cite: 2]
-
-    rep(i, 0, (int)targets.size() - 1) {
-        int des = targets[i+1];
-        while (cur != des) {
-            vi path = get_bfs_path(N, g, cur, des);
-            int next_v = path[1];
-
-            if (!in_B[next_v]) {
-                // next_v を持つ A 内のインデックスを探す（全都市が A に存在するため必ず見つかる）
-                int target_pa = 0;
-                rep(j, 0, La) {
-                    if (A[j] == next_v) {
-                        target_pa = j;
-                        break;
-                    }
-                }
-
-                int pa = min(target_pa, max(0, La - Lb));
-                int len = min(Lb, La - pa);
-
-                cout << "s " << len << " " << pa << " 0\n";
-
-                fill(in_B.begin(), in_B.end(), false);
-                rep(j, 0, len) {
-                    B[j] = A[pa + j];
-                    in_B[B[j]] = true;
-                }
+    // スコア計算関数（長方形内にいる魚の数を直接数える）
+    auto calc_score = [&](int lx, int ly, int rx, int ry) {
+        int score = 0;
+        rep(i, 0, N) {
+            if (good_fish[i].first >= lx && good_fish[i].first <= rx &&
+                good_fish[i].second >= ly && good_fish[i].second <= ry) {
+                score++;
             }
-
-            cout << "m " << next_v << "\n";
-            cur = next_v;
+            if (bad_fish[i].first >= lx && bad_fish[i].first <= rx &&
+                bad_fish[i].second >= ly && bad_fish[i].second <= ry) {
+                score--;
+            }
         }
+        return score;
+    };
+
+    int current_score = calc_score(x1, y1, x2, y2);
+    int finalscore = current_score;
+    vpii finalnet(4);
+
+    auto update_final = [&]() {
+        finalnet[0] = {x1, y1};
+        finalnet[1] = {x2, y1};
+        finalnet[2] = {x2, y2};
+        finalnet[3] = {x1, y2};
+    };
+    update_final();
+
+    auto start = chrono::steady_clock::now();
+    int iter = 0;
+
+    // 山登り（近傍変形：長方形の境界を直接動かす）
+    while (true) {
+        if ((++iter & 1023) == 0) {
+            auto now = chrono::steady_clock::now();
+            if (chrono::duration_cast<chrono::milliseconds>(now - start).count() > 1900) break;
+        }
+
+        int nx1 = x1, ny1 = y1, nx2 = x2, ny2 = y2;
+        int type = rng.rand_int(4);
+        int delta = (rng.rand_int(2) == 0 ? 1 : -1) * (1 + rng.rand_int(50)); // 少し大きめに動かすと探索しやすい
+
+        if (type == 0) nx1 += delta;
+        else if (type == 1) nx2 += delta;
+        else if (type == 2) ny1 += delta;
+        else if (type == 3) ny2 += delta;
+
+        // 範囲チェック (0 〜 100000)
+        if (nx1 < 0 || nx2 > 100000 || ny1 < 0 || ny2 > 100000) continue;
+        if (nx1 >= nx2 || ny1 >= ny2) continue;
+
+        int perimeter = (nx2 - nx1 + ny2 - ny1) * 2;
+        if (perimeter > 400000) continue;
+
+        int next_score = calc_score(nx1, ny1, nx2, ny2);
+
+        if (next_score >= current_score) {
+            x1 = nx1; y1 = ny1; x2 = nx2; y2 = ny2;
+            current_score = next_score;
+
+            if (current_score > finalscore) {
+                finalscore = current_score;
+                update_final();
+            }
+        }
+    }
+
+    // 出力
+    cout << 4 << "\n";
+    rep(i, 0, 4) {
+        cout << finalnet[i].first << " " << finalnet[i].second << "\n";
     }
 
     return 0;
