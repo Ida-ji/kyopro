@@ -23,4 +23,8 @@ int main() {
             sumgrid[i + 1][j + 1] = grid[i][j] + sumgrid[i][j + 1] + sumgrid[i + 1][j] - sumgrid[i][j];
         }
     }
+
+    //左上(y1, x1)、右下(y2, x2)の長方形の中の累積和
+    int y1, y2, x1, x2;
+    int current_score = sumgrid[y2][x2] - sumgrid[y1][x2] - sumgrid[y2][x1] + sumgrid[y1][x1];
 }
