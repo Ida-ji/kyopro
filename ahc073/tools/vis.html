@@ -1,0 +1,288 @@
+<html><body><svg data-board-left="10" data-board-n="128" data-board-size="768" data-board-top="65" height="850" id="vis" onpointerleave="this.querySelector(&apos;#cell-tooltip&apos;).setAttribute(&apos;visibility&apos;, &apos;hidden&apos;)" onpointermove="
+const tip = this.querySelector(&apos;#cell-tooltip&apos;);
+const matrix = this.getScreenCTM();
+if (!matrix) return;
+const p = this.createSVGPoint();
+p.x = event.clientX;
+p.y = event.clientY;
+const q = p.matrixTransform(matrix.inverse());
+const left = Number(this.dataset.boardLeft);
+const top = Number(this.dataset.boardTop);
+const size = Number(this.dataset.boardSize);
+const n = Number(this.dataset.boardN);
+if (q.x &lt; left || q.x &gt;= left + size || q.y &lt; top || q.y &gt;= top + size) {
+    tip.setAttribute(&apos;visibility&apos;, &apos;hidden&apos;);
+    return;
+}
+const i = Math.floor((q.y - top) * n / size);
+const j = Math.floor((q.x - left) * n / size);
+const target = event.target.closest(&apos;[data-tooltip]&apos;);
+const label = tip.querySelector(&apos;text&apos;);
+const cell = &apos;(&apos; + i + &apos;, &apos; + j + &apos;)&apos;;
+label.textContent = target ? target.dataset.tooltip + &apos; | cell &apos; + cell : cell;
+const width = Math.ceil(label.getComputedTextLength()) + 14;
+tip.querySelector(&apos;rect&apos;).setAttribute(&apos;width&apos;, width);
+tip.setAttribute(&apos;transform&apos;, &apos;translate(&apos; + Math.max(0, Math.min(q.x + 12, this.viewBox.baseVal.width - width - 6)) + &apos; &apos; + Math.min(q.y + 12, this.viewBox.baseVal.height - 30) + &apos;)&apos;);
+tip.setAttribute(&apos;visibility&apos;, &apos;visible&apos;);
+" style="background-color:white" viewBox="0 0 1040 850" width="1040" xmlns="http://www.w3.org/2000/svg">
+<style>
+text {text-anchor:middle;dominant-baseline:central;font-family:sans-serif}
+</style>
+<rect fill="#f5f7fa" height="27" rx="6" stroke="#cfd8dc" stroke-width="1" width="248" x="4" y="3"/>
+<rect fill="#f5f7fa" height="27" rx="6" stroke="#cfd8dc" stroke-width="1" width="248" x="264" y="3"/>
+<rect fill="#f5f7fa" height="27" rx="6" stroke="#cfd8dc" stroke-width="1" width="248" x="524" y="3"/>
+<rect fill="#f5f7fa" height="64" rx="6" stroke="#cfd8dc" stroke-width="1" width="244" x="786" y="64"/>
+<rect fill="#f5f7fa" height="112" rx="6" stroke="#cfd8dc" stroke-width="1" width="244" x="786" y="134"/>
+<rect fill="#f5f7fa" height="52" rx="6" stroke="#cfd8dc" stroke-width="1" width="244" x="786" y="254"/>
+<g style="user-select:text;cursor:text">
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text;cursor:text" x="10" y="16">
+t = 9573
+</text>
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text;cursor:text" x="270" y="16">
+score = 2753
+</text>
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text;cursor:text" x="530" y="16">
+visited = 150 / 150
+</text>
+</g>
+<g id="board-grid"><rect x="10" y="65" width="768" height="768" fill="white"/><path d="M 10 65 V 833 M 10 65 H 778 M 16 65 V 833 M 10 71 H 778 M 22 65 V 833 M 10 77 H 778 M 28 65 V 833 M 10 83 H 778 M 34 65 V 833 M 10 89 H 778 M 40 65 V 833 M 10 95 H 778 M 46 65 V 833 M 10 101 H 778 M 52 65 V 833 M 10 107 H 778 M 58 65 V 833 M 10 113 H 778 M 64 65 V 833 M 10 119 H 778 M 70 65 V 833 M 10 125 H 778 M 76 65 V 833 M 10 131 H 778 M 82 65 V 833 M 10 137 H 778 M 88 65 V 833 M 10 143 H 778 M 94 65 V 833 M 10 149 H 778 M 100 65 V 833 M 10 155 H 778 M 106 65 V 833 M 10 161 H 778 M 112 65 V 833 M 10 167 H 778 M 118 65 V 833 M 10 173 H 778 M 124 65 V 833 M 10 179 H 778 M 130 65 V 833 M 10 185 H 778 M 136 65 V 833 M 10 191 H 778 M 142 65 V 833 M 10 197 H 778 M 148 65 V 833 M 10 203 H 778 M 154 65 V 833 M 10 209 H 778 M 160 65 V 833 M 10 215 H 778 M 166 65 V 833 M 10 221 H 778 M 172 65 V 833 M 10 227 H 778 M 178 65 V 833 M 10 233 H 778 M 184 65 V 833 M 10 239 H 778 M 190 65 V 833 M 10 245 H 778 M 196 65 V 833 M 10 251 H 778 M 202 65 V 833 M 10 257 H 778 M 208 65 V 833 M 10 263 H 778 M 214 65 V 833 M 10 269 H 778 M 220 65 V 833 M 10 275 H 778 M 226 65 V 833 M 10 281 H 778 M 232 65 V 833 M 10 287 H 778 M 238 65 V 833 M 10 293 H 778 M 244 65 V 833 M 10 299 H 778 M 250 65 V 833 M 10 305 H 778 M 256 65 V 833 M 10 311 H 778 M 262 65 V 833 M 10 317 H 778 M 268 65 V 833 M 10 323 H 778 M 274 65 V 833 M 10 329 H 778 M 280 65 V 833 M 10 335 H 778 M 286 65 V 833 M 10 341 H 778 M 292 65 V 833 M 10 347 H 778 M 298 65 V 833 M 10 353 H 778 M 304 65 V 833 M 10 359 H 778 M 310 65 V 833 M 10 365 H 778 M 316 65 V 833 M 10 371 H 778 M 322 65 V 833 M 10 377 H 778 M 328 65 V 833 M 10 383 H 778 M 334 65 V 833 M 10 389 H 778 M 340 65 V 833 M 10 395 H 778 M 346 65 V 833 M 10 401 H 778 M 352 65 V 833 M 10 407 H 778 M 358 65 V 833 M 10 413 H 778 M 364 65 V 833 M 10 419 H 778 M 370 65 V 833 M 10 425 H 778 M 376 65 V 833 M 10 431 H 778 M 382 65 V 833 M 10 437 H 778 M 388 65 V 833 M 10 443 H 778 M 394 65 V 833 M 10 449 H 778 M 400 65 V 833 M 10 455 H 778 M 406 65 V 833 M 10 461 H 778 M 412 65 V 833 M 10 467 H 778 M 418 65 V 833 M 10 473 H 778 M 424 65 V 833 M 10 479 H 778 M 430 65 V 833 M 10 485 H 778 M 436 65 V 833 M 10 491 H 778 M 442 65 V 833 M 10 497 H 778 M 448 65 V 833 M 10 503 H 778 M 454 65 V 833 M 10 509 H 778 M 460 65 V 833 M 10 515 H 778 M 466 65 V 833 M 10 521 H 778 M 472 65 V 833 M 10 527 H 778 M 478 65 V 833 M 10 533 H 778 M 484 65 V 833 M 10 539 H 778 M 490 65 V 833 M 10 545 H 778 M 496 65 V 833 M 10 551 H 778 M 502 65 V 833 M 10 557 H 778 M 508 65 V 833 M 10 563 H 778 M 514 65 V 833 M 10 569 H 778 M 520 65 V 833 M 10 575 H 778 M 526 65 V 833 M 10 581 H 778 M 532 65 V 833 M 10 587 H 778 M 538 65 V 833 M 10 593 H 778 M 544 65 V 833 M 10 599 H 778 M 550 65 V 833 M 10 605 H 778 M 556 65 V 833 M 10 611 H 778 M 562 65 V 833 M 10 617 H 778 M 568 65 V 833 M 10 623 H 778 M 574 65 V 833 M 10 629 H 778 M 580 65 V 833 M 10 635 H 778 M 586 65 V 833 M 10 641 H 778 M 592 65 V 833 M 10 647 H 778 M 598 65 V 833 M 10 653 H 778 M 604 65 V 833 M 10 659 H 778 M 610 65 V 833 M 10 665 H 778 M 616 65 V 833 M 10 671 H 778 M 622 65 V 833 M 10 677 H 778 M 628 65 V 833 M 10 683 H 778 M 634 65 V 833 M 10 689 H 778 M 640 65 V 833 M 10 695 H 778 M 646 65 V 833 M 10 701 H 778 M 652 65 V 833 M 10 707 H 778 M 658 65 V 833 M 10 713 H 778 M 664 65 V 833 M 10 719 H 778 M 670 65 V 833 M 10 725 H 778 M 676 65 V 833 M 10 731 H 778 M 682 65 V 833 M 10 737 H 778 M 688 65 V 833 M 10 743 H 778 M 694 65 V 833 M 10 749 H 778 M 700 65 V 833 M 10 755 H 778 M 706 65 V 833 M 10 761 H 778 M 712 65 V 833 M 10 767 H 778 M 718 65 V 833 M 10 773 H 778 M 724 65 V 833 M 10 779 H 778 M 730 65 V 833 M 10 785 H 778 M 736 65 V 833 M 10 791 H 778 M 742 65 V 833 M 10 797 H 778 M 748 65 V 833 M 10 803 H 778 M 754 65 V 833 M 10 809 H 778 M 760 65 V 833 M 10 815 H 778 M 766 65 V 833 M 10 821 H 778 M 772 65 V 833 M 10 827 H 778 M 778 65 V 833 M 10 833 H 778 " fill="none" stroke="#eceff1" stroke-width="0.4"/></g>
+<g>
+<circle cx="523" cy="452" data-tooltip="g_0 = (64, 85) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="205" cy="410" data-tooltip="g_1 = (57, 32) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="673" cy="314" data-tooltip="g_2 = (41, 110) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="469" cy="428" data-tooltip="g_3 = (60, 76) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="397" cy="164" data-tooltip="g_4 = (16, 64) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="511" cy="278" data-tooltip="g_5 = (35, 83) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="367" cy="200" data-tooltip="g_6 = (22, 59) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="25" cy="380" data-tooltip="g_7 = (52, 2) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="13" cy="530" data-tooltip="g_8 = (77, 0) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="697" cy="350" data-tooltip="g_9 = (47, 114) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="433" cy="644" data-tooltip="g_10 = (96, 70) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="241" cy="68" data-tooltip="g_11 = (0, 38) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="241" cy="188" data-tooltip="g_12 = (20, 38) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="259" cy="374" data-tooltip="g_13 = (51, 41) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="313" cy="314" data-tooltip="g_14 = (41, 50) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="565" cy="422" data-tooltip="g_15 = (59, 92) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="745" cy="470" data-tooltip="g_16 = (67, 122) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="31" cy="518" data-tooltip="g_17 = (75, 3) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="655" cy="458" data-tooltip="g_18 = (65, 107) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="211" cy="170" data-tooltip="g_19 = (17, 33) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="79" cy="206" data-tooltip="g_20 = (23, 11) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="517" cy="560" data-tooltip="g_21 = (82, 84) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="475" cy="806" data-tooltip="g_22 = (123, 77) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="391" cy="110" data-tooltip="g_23 = (7, 63) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="499" cy="398" data-tooltip="g_24 = (55, 81) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="199" cy="800" data-tooltip="g_25 = (122, 31) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="679" cy="566" data-tooltip="g_26 = (83, 111) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="535" cy="680" data-tooltip="g_27 = (102, 87) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="703" cy="146" data-tooltip="g_28 = (13, 115) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="661" cy="158" data-tooltip="g_29 = (15, 108) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="259" cy="530" data-tooltip="g_30 = (77, 41) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="25" cy="794" data-tooltip="g_31 = (121, 2) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="733" cy="212" data-tooltip="g_32 = (24, 120) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="151" cy="782" data-tooltip="g_33 = (119, 23) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="703" cy="230" data-tooltip="g_34 = (27, 115) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="187" cy="272" data-tooltip="g_35 = (34, 29) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="733" cy="578" data-tooltip="g_36 = (85, 120) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="535" cy="830" data-tooltip="g_37 = (127, 87) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="133" cy="380" data-tooltip="g_38 = (52, 20) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="733" cy="824" data-tooltip="g_39 = (126, 120) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="277" cy="542" data-tooltip="g_40 = (79, 44) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="349" cy="692" data-tooltip="g_41 = (104, 56) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="505" cy="266" data-tooltip="g_42 = (33, 82) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="709" cy="188" data-tooltip="g_43 = (20, 116) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="343" cy="698" data-tooltip="g_44 = (105, 55) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="493" cy="710" data-tooltip="g_45 = (107, 80) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="367" cy="134" data-tooltip="g_46 = (11, 59) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="751" cy="548" data-tooltip="g_47 = (80, 123) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="301" cy="452" data-tooltip="g_48 = (64, 48) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="247" cy="98" data-tooltip="g_49 = (5, 39) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="457" cy="140" data-tooltip="g_50 = (12, 74) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="469" cy="110" data-tooltip="g_51 = (7, 76) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="217" cy="200" data-tooltip="g_52 = (22, 34) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="517" cy="824" data-tooltip="g_53 = (126, 84) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="85" cy="332" data-tooltip="g_54 = (44, 12) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="601" cy="92" data-tooltip="g_55 = (4, 98) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="427" cy="788" data-tooltip="g_56 = (120, 69) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="583" cy="650" data-tooltip="g_57 = (97, 95) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="73" cy="578" data-tooltip="g_58 = (85, 10) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="241" cy="296" data-tooltip="g_59 = (38, 38) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="265" cy="452" data-tooltip="g_60 = (64, 42) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="595" cy="764" data-tooltip="g_61 = (116, 97) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="439" cy="554" data-tooltip="g_62 = (81, 71) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="235" cy="386" data-tooltip="g_63 = (53, 37) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="175" cy="584" data-tooltip="g_64 = (86, 27) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="619" cy="194" data-tooltip="g_65 = (21, 101) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="307" cy="404" data-tooltip="g_66 = (56, 49) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="301" cy="416" data-tooltip="g_67 = (58, 48) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="457" cy="122" data-tooltip="g_68 = (9, 74) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="577" cy="134" data-tooltip="g_69 = (11, 94) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="169" cy="218" data-tooltip="g_70 = (25, 26) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="109" cy="296" data-tooltip="g_71 = (38, 16) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="367" cy="392" data-tooltip="g_72 = (54, 59) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="637" cy="122" data-tooltip="g_73 = (9, 104) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="379" cy="260" data-tooltip="g_74 = (32, 61) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="475" cy="86" data-tooltip="g_75 = (3, 77) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="61" cy="740" data-tooltip="g_76 = (112, 8) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="769" cy="674" data-tooltip="g_77 = (101, 126) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="667" cy="356" data-tooltip="g_78 = (48, 109) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="289" cy="602" data-tooltip="g_79 = (89, 46) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="637" cy="656" data-tooltip="g_80 = (98, 104) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="565" cy="578" data-tooltip="g_81 = (85, 92) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="637" cy="188" data-tooltip="g_82 = (20, 104) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="277" cy="620" data-tooltip="g_83 = (92, 44) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="37" cy="614" data-tooltip="g_84 = (91, 4) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="775" cy="290" data-tooltip="g_85 = (37, 127) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="499" cy="602" data-tooltip="g_86 = (89, 81) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="607" cy="746" data-tooltip="g_87 = (113, 99) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="13" cy="518" data-tooltip="g_88 = (75, 0) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="433" cy="506" data-tooltip="g_89 = (73, 70) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="733" cy="272" data-tooltip="g_90 = (34, 120) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="673" cy="650" data-tooltip="g_91 = (97, 110) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="745" cy="296" data-tooltip="g_92 = (38, 122) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="661" cy="734" data-tooltip="g_93 = (111, 108) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="775" cy="386" data-tooltip="g_94 = (53, 127) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="655" cy="128" data-tooltip="g_95 = (10, 107) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="229" cy="698" data-tooltip="g_96 = (105, 36) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="187" cy="752" data-tooltip="g_97 = (114, 29) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="253" cy="566" data-tooltip="g_98 = (83, 40) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="139" cy="800" data-tooltip="g_99 = (122, 21) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="655" cy="512" data-tooltip="g_100 = (74, 107) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="247" cy="410" data-tooltip="g_101 = (57, 39) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="139" cy="350" data-tooltip="g_102 = (47, 21) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="583" cy="794" data-tooltip="g_103 = (121, 95) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="301" cy="632" data-tooltip="g_104 = (94, 48) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="685" cy="800" data-tooltip="g_105 = (122, 112) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="241" cy="404" data-tooltip="g_106 = (56, 38) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="577" cy="590" data-tooltip="g_107 = (87, 94) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="673" cy="218" data-tooltip="g_108 = (25, 110) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="661" cy="362" data-tooltip="g_109 = (49, 108) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="463" cy="488" data-tooltip="g_110 = (70, 75) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="325" cy="788" data-tooltip="g_111 = (120, 52) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="697" cy="734" data-tooltip="g_112 = (111, 114) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="385" cy="560" data-tooltip="g_113 = (82, 62) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="733" cy="584" data-tooltip="g_114 = (86, 120) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="523" cy="740" data-tooltip="g_115 = (112, 85) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="367" cy="770" data-tooltip="g_116 = (117, 59) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="409" cy="830" data-tooltip="g_117 = (127, 66) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="703" cy="344" data-tooltip="g_118 = (46, 115) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="271" cy="782" data-tooltip="g_119 = (119, 43) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="109" cy="542" data-tooltip="g_120 = (79, 16) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="103" cy="752" data-tooltip="g_121 = (114, 15) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="235" cy="326" data-tooltip="g_122 = (43, 37) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="397" cy="770" data-tooltip="g_123 = (117, 64) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="295" cy="674" data-tooltip="g_124 = (101, 47) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="355" cy="722" data-tooltip="g_125 = (109, 57) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="601" cy="770" data-tooltip="g_126 = (117, 98) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="397" cy="398" data-tooltip="g_127 = (55, 64) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="637" cy="212" data-tooltip="g_128 = (24, 104) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="421" cy="560" data-tooltip="g_129 = (82, 68) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="445" cy="326" data-tooltip="g_130 = (43, 72) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="661" cy="398" data-tooltip="g_131 = (55, 108) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="127" cy="440" data-tooltip="g_132 = (62, 19) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="361" cy="446" data-tooltip="g_133 = (63, 58) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="409" cy="194" data-tooltip="g_134 = (21, 66) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="445" cy="68" data-tooltip="g_135 = (0, 72) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="775" cy="194" data-tooltip="g_136 = (21, 127) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="475" cy="446" data-tooltip="g_137 = (63, 77) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="655" cy="650" data-tooltip="g_138 = (97, 107) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="631" cy="134" data-tooltip="g_139 = (11, 103) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="571" cy="494" data-tooltip="g_140 = (71, 93) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="43" cy="770" data-tooltip="g_141 = (117, 5) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="403" cy="524" data-tooltip="g_142 = (76, 65) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="265" cy="572" data-tooltip="g_143 = (84, 42) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="265" cy="482" data-tooltip="g_144 = (69, 42) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="145" cy="662" data-tooltip="g_145 = (99, 22) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="541" cy="632" data-tooltip="g_146 = (94, 88) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="127" cy="428" data-tooltip="g_147 = (60, 19) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="643" cy="548" data-tooltip="g_148 = (80, 105) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<circle cx="145" cy="338" data-tooltip="g_149 = (45, 22) [visited]" fill="white" r="3" stroke="#94a3b8" stroke-width="1"/>
+<g id="trail">
+<g data-tooltip="Operation 9558: (51, 12) to (51, 13)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="85" x2="91" y1="374" y2="374"/>
+</g>
+<g data-tooltip="Operation 9559: (51, 13) to (50, 13)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="91" x2="91" y1="374" y2="368"/>
+</g>
+<g data-tooltip="Operation 9560: (50, 13) to (50, 14)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="91" x2="97" y1="368" y2="368"/>
+</g>
+<g data-tooltip="Operation 9561: (50, 14) to (49, 14)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="97" x2="97" y1="368" y2="362"/>
+</g>
+<g data-tooltip="Operation 9562: (49, 14) to (48, 14)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="97" x2="97" y1="362" y2="356"/>
+</g>
+<g data-tooltip="Operation 9563: (48, 14) to (47, 14)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="97" x2="97" y1="356" y2="350"/>
+</g>
+<g data-tooltip="Operation 9564: (47, 14) to (47, 15)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="97" x2="103" y1="350" y2="350"/>
+</g>
+<g data-tooltip="Operation 9565: (47, 15) to (47, 16)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="103" x2="109" y1="350" y2="350"/>
+</g>
+<g data-tooltip="Operation 9566: (47, 16) to (47, 17)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="109" x2="115" y1="350" y2="350"/>
+</g>
+<g data-tooltip="Operation 9567: (47, 17) to (47, 18)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="115" x2="121" y1="350" y2="350"/>
+</g>
+<g data-tooltip="Operation 9568: (47, 18) to (46, 18)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="121" x2="121" y1="350" y2="344"/>
+</g>
+<g data-tooltip="Operation 9569: (46, 18) to (46, 19)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="121" x2="127" y1="344" y2="344"/>
+</g>
+<g data-tooltip="Operation 9570: (46, 19) to (46, 20)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="127" x2="133" y1="344" y2="344"/>
+</g>
+<g data-tooltip="Operation 9571: (46, 20) to (45, 20)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="133" x2="133" y1="344" y2="338"/>
+</g>
+<g data-tooltip="Operation 9572: (45, 20) to (45, 21)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="133" x2="139" y1="338" y2="338"/>
+</g>
+<g data-tooltip="Operation 9573: (45, 21) to (45, 22)">
+<line stroke="#263238" stroke-dasharray="none" stroke-width="2" x1="139" x2="145" y1="338" y2="338"/>
+</g>
+</g>
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text;cursor:text" x="795" y="148">
+Magic circles
+</text>
+<g data-tooltip="magic circles at (16, 103): 1">
+<circle cx="631" cy="164" fill="none" pointer-events="all" r="5" stroke="#8e24aa" stroke-width="2"/>
+</g>
+<g data-tooltip="magic circles at (60, 98): 1">
+<circle cx="601" cy="428" fill="none" pointer-events="all" r="5" stroke="#8e24aa" stroke-width="2"/>
+</g>
+<g data-tooltip="magic circles at (80, 105): 1">
+<circle cx="643" cy="548" fill="none" pointer-events="all" r="5" stroke="#8e24aa" stroke-width="2"/>
+</g>
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text" x="795" y="174">
+(16, 103)
+</text>
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text" x="795" y="200">
+(60, 98)
+</text>
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text" x="795" y="226">
+(80, 105)
+</text>
+<circle cx="145" cy="338" data-tooltip="Takahashi = (45, 22)" fill="#111" r="3.5"/>
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text;cursor:text" x="795" y="80">
+p = (45, 22)
+</text>
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text;cursor:text" x="795" y="110">
+Complete
+</text>
+<text fill="black" font-size="16" style="text-anchor:start;user-select:text;cursor:text" x="795" y="280">
+op = R
+</text>
+</g>
+<g id="cell-tooltip" pointer-events="none" visibility="hidden">
+<rect fill="#fff" height="24" rx="4" stroke="#64748b" width="94"/>
+<text fill="black" font-size="14" style="text-anchor:start;user-select:text;cursor:text" x="7" y="12">
+
+</text>
+</g>
+</svg></body></html>

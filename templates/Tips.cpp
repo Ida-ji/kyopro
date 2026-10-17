@@ -38,11 +38,6 @@ int main() {
 
     vec.pop_back(); //配列の末尾を削除する
 
-    set<pair<int, int>> cell_set;
-    if (!cell_set.count({1, 3})) {
-        //のように、setに対して存在判定はcount
-    }
-
     // 'a' を 5回繰り返した文字列sを作る
     string s(5, 'a');
 
@@ -81,4 +76,7 @@ int main() {
     if (BA.count({a, b})) {
         cnt++;
     }
+
+    //intからstringの変換はto_string
+    string sN = to_string(N);
 }
