@@ -79,4 +79,11 @@ int main() {
 
     //intからstringの変換はto_string
     string sN = to_string(N);
+
+    double value = 3.14159265;
+    //小数第2位まで表示
+    cout << fixed << setprecision(2) << value << endl;
+
+    //2**iは1LL << i;で計算可能
+    ll N = 1LL << 10; //2**10
 }
